@@ -1,0 +1,234 @@
+const router = require("express").Router();
+const passport = require("passport");
+const validate = require("jsonschema").validate;
+
+const User = require("mongoose").model("User");
+
+const {
+    issueJWT,
+    encodePassword,
+    comparePassword,
+} = require("../../lib/util.lib");
+
+const {
+    updateUserSchema,
+    registerUserSchema,
+    loginUserSchema,
+} = require("../../schemas/user.schema");
+
+const { idResourceSchema } = require("../../schemas/general.schema");
+
+const {
+    ValidationError,
+    noExistResourceError
+} = require("../../lib/errors.lib");
+
+const picturesPopulateFields = ["_id", "title", "description", "url", "private"];  
+
+router.get(
+    "/me",
+    passport.authenticate("jwt", { session: false }),
+    async (req, res) => {
+        req.user.password = undefined;
+        
+        const user = await User.populate(req.user, { path: "privatePictures", select: picturesPopulateFields });
+        const populateUser = await User.populate(user, { path: "publicPictures", select: picturesPopulateFields });
+
+        res.json({ find: true, data: populateUser });
+    }
+);
+
+router.get("/", async (req, res) => {
+    try {
+        const users = await User.find(
+            {},
+            { password: false, privatePictures: false }
+        );
+        const usersPopulate = await User.populate(users, {
+            path: "publicPictures",
+            select: picturesPopulateFields 
+        });
+
+        if (usersPopulate.length)
+            res.status(200).json({ find: true, data: usersPopulate });
+        else res.status(204).json({ find: false, data: usersPopulate });
+    } catch (err) {
+        res.status(500).json({
+            statusMessage: "Internal Server Error",
+            find: false,
+            message: err.message
+        });
+    }
+});
+
+const validateId = (req, res, next) => {
+    try {
+        const { id } = req.params;
+        const validation = validate(req.params, idResourceSchema);
+        const isValid = validation.valid;
+        
+        if(isValid) {
+                next();
+        } else {
+            const errors = validation.errors.map(error => error.message);
+            throw new ValidationError(false, errors);
+        }
+    } catch(err) {
+        res.status(err.status || 500).json({ 
+            statusMessage: err.statusMessage || "Internal Server Error", 
+            find: false, 
+            message: err.message 
+        });
+    } 
+}
+
+router.get("/:id", validateId, async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const user = await User.findById(id, {
+            password: false,
+            privatePictures: false
+        });
+
+        if (!user) throw new noExistResourceError(false);
+        else {
+            const userPopulate = await User.populate(user, {
+                path: "publicPictures",
+                select: picturesPopulateFields 
+            });
+            res.status(200).json({ find: true, data: userPopulate });
+        }
+    } catch (err) {
+        res.status(err.status || 500).json({
+            statusMessage: err.statusMessage || "Internal Server Error",
+            find: err.state,
+            message: err.message
+        });
+    }
+});
+
+router.post("/register", async (req, res) => {
+    try {
+        const validation = validate(req.body, registerUserSchema);
+        const isValid = validation.valid;
+
+        if (isValid) {
+            const { username, email, password } = req.body;
+            const newUser = new User({
+                username,
+                email,
+                password
+            });
+
+            newUser.password = await encodePassword(newUser.password);
+
+            const user = await newUser.save();
+
+            res.status(201).json(issueJWT(user));
+        } else {
+            const errors = validation.errors.map(error => error.message);
+            throw new ValidationError(false, errors);
+        }
+    } catch (err) {
+        res.status(err.status || 500).json({
+            statusMessage: err.statusMessage || "Internal Server Error",
+            register: err.state,
+            message: err.message
+        });
+    }
+});
+
+router.post("/login", async (req, res) => {
+    try {
+        const validation = validate(req.body, loginUserSchema);
+        const isValid = validation.valid;
+
+        if (isValid) {
+            const { email, password } = req.body;
+
+            const user = await User.findOne({ email });
+
+            if (!user) {
+                throw new noExistResourceError(false);
+            } else {
+                const isValid = await comparePassword(password, user.password);
+
+                if (!isValid) {
+                    throw new ValidationError(false, "Password is invalid");
+                } else res.status(200).json(issueJWT(user));
+            }
+        } else {
+            const errors = validation.errors.map(error => error.message);
+            throw new ValidationError(false, errors);
+        }
+    } catch (err) {
+        res.status(err.status || 500).json({
+            statusMessage: err.statusMessage || "Internal Server Error",
+            login: err.state,
+            message: err.message
+        });
+    }
+});
+
+router.use(passport.authenticate("jwt", { session: false }));
+
+router.delete("/delete", async (req, res) => {
+    try {
+        const { _id } = req.user;
+
+        const user = await User.findByIdAndDelete(_id);
+
+        if (!user) throw new noExistResourceError(false);
+        else {
+            res.status(200).json({
+                deleted: true,
+                message: "User Deleted"
+            });
+        }
+    } catch (err) {
+        res.status(err.status || 500).json({
+            statusMessage: err.statusMessage || "Internal Server Error",
+            deleted: err.state,
+            message: err.message
+        });
+    }
+});
+
+router.put("/update", async (req, res) => {
+    try {
+        const validation = validate(req.body, updateUserSchema);
+        const isValid = validation.valid;
+
+        if (isValid) {
+            const { _id } = req.user;
+            const { username, email } = req.body;
+            const password = await encodePassword(req.body.password);
+
+            const updatedUser = await User.findByIdAndUpdate(_id, {
+                username,
+                email,
+                password
+            });
+
+            if (!updatedUser) throw new noExistResourceError(false);
+            else {
+                res.status(200).json({
+                    updated: true,
+                    message: "Users Updated"
+                });
+            }
+        } else {
+            const errors = validation.errors.map(error => error.message);
+            throw new ValidationError(false, errors);
+        }
+    } catch (err) {
+        res.status(err.status || 500).json({
+            statusMessage: err.statusMessage || "Internal Server Error",
+            updated: err.state,
+            message: err.message
+        });
+    }
+});
+
+module.exports = router;
