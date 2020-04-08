@@ -33,17 +33,17 @@ async function comparePassword(password, encodePassword) {
     return await compare(password, encodePassword);
 }
 
-const stringToBoolean = string => {
-    if(!string) return undefined;
-
-    if(string === "true") return true
-    else if(string === "false") return false;
-    else throw new ValidationError(false, "Private field dont have correct format");
-}
+const errorMessages = {
+    required: "property is required",
+    length: (min, max) =>
+        `property should be between '${min}' and '${max}' character`,
+    format: format => `property does not comply with the '${format}' format`,
+    type: type => `property should be '${type}' type`
+};
 
 module.exports = {
     issueJWT,
     encodePassword,
     comparePassword,
-    stringToBoolean
+    errorMessages
 };

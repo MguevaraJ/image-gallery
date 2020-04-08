@@ -1,68 +1,143 @@
+const { length, format, required } = require("../lib/util.lib");
+
 const updateUserSchema = {
-    id: "/update-user",
-    type: "object",
-    properties: {
-        username: {
-            type: "string",
-            minLength: 5,
-            maxLength: 15
+    username: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
         },
-        email: {
-            type: "string",
-            format: "email",
-            maxLength: 40
+        isLength: {
+            options: {
+                min: 5,
+                max: 15
+            },
+            errorMessage: length(5, 15)
         },
-        password: {
-            type: "string",
-            minLength: 8,
-            maxLength: 30
-        }
+        trim: true,
+        escape: true,
+        errorMessage: required
     },
-    additionalProperties: false,
-    required: ["username", "email", "password"]
+    email: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
+        },
+        isLength: {
+            options: {
+                min: 20,
+                max: 40
+            },
+            errorMessage: length(20, 40)
+        },
+        trim: true,
+        isEmail: {
+            errorMessage: format("email")
+        },
+        normalizeEmail: true,
+        errorMessage: required
+    },
+    password: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
+        },
+        isLength: {
+            options: {
+                min: 8,
+                max: 30
+            },
+            errorMessage: length(8, 30)
+        },
+        errorMessage: required
+    }
 };
 
 const registerUserSchema = {
-    id: "/register-user",
-    type: "object",
-    properties: {
-        username: {
-            type: "string",
-            minLength: 5,
-            maxLength: 15
+    username: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
         },
-        email: {
-            type: "string",
-            format: "email",
-            maxLength: 40
+        trim: true,
+        isLength: {
+            options: {
+                min: 5,
+                max: 15
+            },
+            errorMessage: length(5, 15)
         },
-        password: {
-            type: "string",
-            minLength: 8,
-            maxLength: 30
-        }
+        escape: true,
+        errorMessage: required
     },
-    additionalProperties: false,
-    required: ["username", "email", "password"]
+    email: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
+        },
+        trim: true,
+        isLength: {
+            options: {
+                min: 20,
+                max: 40
+            },
+            errorMessage: length(20, 40)
+        },
+        isEmail: {
+            errorMessage: format("email")
+        },
+        normalizeEmail: true,
+        errorMessage: required
+    },
+    password: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
+        },
+        isLength: {
+            options: {
+                min: 8,
+                max: 30
+            },
+            errorMessage: length(8, 30)
+        },
+        errorMessage: required
+    }
 };
 
 const loginUserSchema = {
-    id: "/login-user",
-    type: "object",
-    properties: {
-        email: {
-            type: "string",
-            format: "email",
-            maxLength: 40
+    email: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
         },
-        password: {
-            type: "string",
-            minLength: 8,
-            maxLength: 30
-        }
+        trim: true,
+        isLength: {
+            options: {
+                min: 25,
+                max: 40
+            },
+            errorMessage: length(25, 40)
+        },
+        isEmail: {
+            errorMessage: format("email")
+        },
+        normalizeEmail: true,
+        errorMessage: required
     },
-    additionalProperties: false,
-    required: ["email", "password"]
+    password: {
+        in: ["body"],
+        isEmpty: {
+            negated: true
+        },
+        isLength: {
+            options: {
+                min: 8,
+                max: 30
+            },
+            errorMessage: length(8, 30)
+        },
+        errorMessage: required
+    }
 };
 
 module.exports = {
