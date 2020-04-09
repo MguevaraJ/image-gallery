@@ -1,4 +1,6 @@
-const { format } = require("../lib/util.lib");
+const {
+    errorMessages: { format }
+} = require("../lib/util.lib");
 
 const idResourceSchema = {
     id: {

@@ -2,13 +2,17 @@ const passport = require("passport");
 const express = require("express");
 const app = express();
 
+const cors = require("cors");
+const morgan = require("morgan");
+
 const mongoose = require("mongoose");
 
 app.set("PORT", 5500 || process.env.PORT);
 
 require("../models/main.model");
 
-//app.use(require("cors"));
+app.use(morgan("dev"));
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(passport.initialize());

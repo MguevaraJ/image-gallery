@@ -1,4 +1,6 @@
-const { length, format, required } = require("../lib/util.lib");
+const {
+    errorMessages: { length, format, required }
+} = require("../lib/util.lib");
 
 const updateUserSchema = {
     username: {

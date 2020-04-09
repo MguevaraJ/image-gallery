@@ -1,4 +1,6 @@
-const { length, format, required, type } = require("../lib/util.lib");
+const {
+    errorMessages: { length, format, required, type }
+} = require("../lib/util.lib");
 
 const createPictureSchema = {
     title: {

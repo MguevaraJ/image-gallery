@@ -1,5 +1,6 @@
 const jwt = require("jsonwebtoken");
 const { genSalt, hash, compare } = require("bcryptjs");
+const passport = require("passport");
 
 const { ValidationError } = require("./errors.lib");
 
@@ -40,6 +41,8 @@ const errorMessages = {
     format: format => `property does not comply with the '${format}' format`,
     type: type => `property should be '${type}' type`
 };
+
+const authenticateJWT = passport.authenticate("jwt", { session: false });
 
 module.exports = {
     issueJWT,
