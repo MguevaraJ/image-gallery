@@ -1,3 +1,7 @@
+const User = require("mongoose").model("User");
+const { encodePassword } = require("../../../lib/util.lib");
+const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const { _id } = req.user;
@@ -10,18 +14,11 @@ module.exports = async (req, res) => {
             password
         });
 
-        if (!updatedUser) throw new noExistResourceError(false);
+        if (!updatedUser) NOT_FOUND(res, "The user you want to edit does not exist");
         else {
-            res.status(200).json({
-                updated: true,
-                message: "Users Updated"
-            });
+            OK(res, "User data has been updated correctly");
         }
     } catch (err) {
-        res.status(err.status || 500).json({
-            statusMessage: err.statusMessage || "Internal Server Error",
-            updated: err.state,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

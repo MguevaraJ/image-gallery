@@ -1,3 +1,7 @@
+const User = require("mongoose").model("User");
+const { issueJWT, encodePassword } = require("../../../lib/util.lib");
+const { OK, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const { username, email, password } = req.body;
@@ -11,12 +15,8 @@ module.exports = async (req, res) => {
 
         const user = await newUser.save();
 
-        res.status(201).json(issueJWT(user));
+        OK(res, "Your user has been created successfully", issueJWT(user));
     } catch (err) {
-        res.status(err.status || 500).json({
-            statusMessage: err.statusMessage || "Internal Server Error",
-            register: err.state,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

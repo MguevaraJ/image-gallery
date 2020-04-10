@@ -1,3 +1,6 @@
+const Picture = require("mongoose").model("Picture");
+const { CREATED, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         let { id, privatePictures, publicPictures } = req.user;
@@ -25,15 +28,8 @@ module.exports = async (req, res) => {
                 publicPictures
             });
         }
-        res.status(201).json({
-            statusMessage: "Created",
-            created: true
-        });
+        CREATED(res, "Your photo has been successfully uploaded");
     } catch (err) {
-        res.status(err.status || 500).json({
-            statusMessage: err.statusMessage || "Internal Server Error",
-            created: false,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

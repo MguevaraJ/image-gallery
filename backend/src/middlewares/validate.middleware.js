@@ -1,5 +1,5 @@
 const { validationResult } = require("express-validator");
-const { UnprocessableEntity } = require("http-errors");
+const { INTERNAL_SERVER_ERROR, UNPROCESSABLE_ENTITY } = require("../lib/responses.lib");
 
 const format = ({ location, msg, param, value }) => {
     return `'${location}/${value}/${param}': ${msg}`;
@@ -10,14 +10,9 @@ module.exports = (req, res, next) => {
         const validation = validationResult(req).formatWith(format);
 
         if (!validation.isEmpty()) {
-            throw new UnprocessableEntity(validation.array());
-        }
-        next();
+            UNPROCESSABLE_ENTITY(res, validation.array());
+        } else next();
     } catch (err) {
-        res.status(err.status).json({
-            statusMessage: err.name,
-            validate: false,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

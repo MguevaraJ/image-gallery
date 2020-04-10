@@ -1,8 +1,5 @@
 const jwt = require("jsonwebtoken");
 const { genSalt, hash, compare } = require("bcryptjs");
-const passport = require("passport");
-
-const { ValidationError } = require("./errors.lib");
 
 const issueJWT = user => {
     const id = user._id;
@@ -42,11 +39,14 @@ const errorMessages = {
     type: type => `property should be '${type}' type`
 };
 
-const authenticateJWT = passport.authenticate("jwt", { session: false });
+const picturePopulateFields = ["_id", "title", "description", "url", "private"];
+const userPopulateFields = ["_id", "username", "email"];
 
 module.exports = {
     issueJWT,
     encodePassword,
     comparePassword,
-    errorMessages
+    errorMessages,
+    picturePopulateFields,
+    userPopulateFields
 };

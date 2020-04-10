@@ -1,3 +1,11 @@
+const User = require("mongoose").model("User");
+const { picturesPopulateFields } = require("../../../lib/util.lib");
+const { 
+    OK, 
+    NO_CONTENT, 
+    INTERNAL_SERVER_ERROR 
+} = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const users = await User.find(
@@ -10,13 +18,9 @@ module.exports = async (req, res) => {
         });
 
         if (usersPopulate.length)
-            res.status(200).json({ find: true, data: usersPopulate });
-        else res.status(204).json({ find: false, data: usersPopulate });
+            OK(res, null, usersPopulate);
+        else NO_CONTENT(res);
     } catch (err) {
-        res.status(500).json({
-            statusMessage: "Internal Server Error",
-            find: false,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message)
     }
 };

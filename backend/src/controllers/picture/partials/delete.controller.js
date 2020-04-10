@@ -1,3 +1,7 @@
+const Picture = require("mongoose").model("Picture");
+const User = require("mongoose").model("User");
+const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const { id } = req.params;
@@ -12,8 +16,6 @@ module.exports = async (req, res) => {
             const updatedUser = await User.findByIdAndUpdate(_id, {
                 privatePictures: newPrivatePictures
             });
-
-            if (!updatedUser) noExistResourceError(falsee);
         } else {
             publicPictureMatch = publicPictures.includes(id);
 
@@ -22,25 +24,16 @@ module.exports = async (req, res) => {
                 const updatedUser = await User.findByIdAndUpdate(_id, {
                     publicPictures: newPublicPictures
                 });
-
-                if (!updatedUser) throw new noExistResourceError(false);
             } else {
-                throw new noExistResourceError(false);
+                NOT_FOUND(res, "The photo you are trying to delete does not exist in your photo log");
             }
         }
 
         if (privatePictureMatch || publicPictureMatch) {
             const deletedPicture = await Picture.findByIdAndDelete(id);
-
-            res.status(200).json({ statusMessage: "OK", deleted: true });
-        } else {
-            throw new UnknowError(false);
-        }
+            OK(res, "Your photo has been successfully deleted");
+        } 
     } catch (err) {
-        res.status(err.status || 500).json({
-            statusMessage: err.statusMessage || "Internal Server Error",
-            deleted: false,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

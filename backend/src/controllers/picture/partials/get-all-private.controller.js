@@ -1,3 +1,7 @@
+const Picture = require("mongoose").model("Picture");
+const { picturePopulateFields } = require("../../../lib/util.lib");
+const { OK, NO_CONTENT, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const populateUser = await Picture.populate(req.user, {
@@ -6,23 +10,9 @@ module.exports = async (req, res) => {
         });
         const { privatePictures } = populateUser;
 
-        if (privatePictures.length)
-            res.status(OK).json({
-                statusMessage: OK_MESSAGE,
-                find: true,
-                privatePictures
-            });
-        else
-            res.status(NO_CONTENT).json({
-                statusMessage: getStatusText(NO_CONTENT_MESSAGE),
-                find: false,
-                privatePictures
-            });
+        if (privatePictures.length) OK(res, null, privatePictures);
+        else NO_CONTENT(res);
     } catch (err) {
-        res.status(INTERNAL_SERVER_ERROR).json({
-            statusMessage: getStatusText(INTERNAL_SERVER_ERROR),
-            find: false,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

@@ -1,3 +1,7 @@
+const Picture = require("mongoose").model("Picture");
+const { userPopulateFields } = require("../../../lib/util.lib");
+const { OK, NOT_FOUND, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+
 module.exports = async (req, res) => {
     try {
         const { id } = req.params;
@@ -7,18 +11,9 @@ module.exports = async (req, res) => {
             private: false
         }).populate({ path: "owner", select: userPopulateFields });
 
-        if (!picture) throw new noExistResourceError(false);
-        else
-            res.status(200).json({
-                statusMessage: "OK",
-                find: true,
-                data: picture
-            });
+        if (!picture) NOT_FOUND(res, "The photo you are trying to obtain does not exist");
+        else OK(res, null, picture);
     } catch (err) {
-        res.status(err.status || 500).json({
-            statusMessage: err.statusMessage || "Internal Server Error",
-            success: err.state,
-            message: err.message
-        });
+        INTERNAL_SERVER_ERROR(res, err.message);
     }
 };

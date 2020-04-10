@@ -26,10 +26,10 @@ const updateUserSchema = {
         },
         isLength: {
             options: {
-                min: 20,
+                min: 10,
                 max: 40
             },
-            errorMessage: length(20, 40)
+            errorMessage: length(10, 40)
         },
         trim: true,
         isEmail: {
@@ -79,10 +79,10 @@ const registerUserSchema = {
         trim: true,
         isLength: {
             options: {
-                min: 20,
+                min: 10,
                 max: 40
             },
-            errorMessage: length(20, 40)
+            errorMessage: length(10, 40)
         },
         isEmail: {
             errorMessage: format("email")
@@ -115,10 +115,10 @@ const loginUserSchema = {
         trim: true,
         isLength: {
             options: {
-                min: 25,
+                min: 10,
                 max: 40
             },
-            errorMessage: length(25, 40)
+            errorMessage: length(10, 40)
         },
         isEmail: {
             errorMessage: format("email")

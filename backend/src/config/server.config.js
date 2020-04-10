@@ -4,6 +4,7 @@ const app = express();
 
 const cors = require("cors");
 const morgan = require("morgan");
+const helmet = require("helmet");
 
 const mongoose = require("mongoose");
 
@@ -11,6 +12,7 @@ app.set("PORT", 5500 || process.env.PORT);
 
 require("../models/main.model");
 
+app.use(helmet());
 app.use(morgan("dev"));
 app.use(cors());
 app.use(express.json());

@@ -9,7 +9,8 @@
         "server:run": "concurrently \"npm:node:production\" \"node ./src/index.js\"  ",
         "server:watch": "concurrently \"npm:node:development\" \"nodemon ./src/index.js\"",
         "server:test": "concurrently \"npm:node:development\" \"jasmine\"",
-        "server:test:coverage": "concurrently \"npm:node:development\" \"nyc jasmine\""
+        "server:test:coverage": "concurrently \"npm:node:development\" \"nyc jasmine\"",
+        "faker:generate": "node ./src/lib/fake-data.lib.js"
     },
     "author": "Moises Alejandro Guevara Jauregui",
     "license": "GPL-3.0",
@@ -21,8 +22,7 @@
         "dotenv": "^8.2.0",
         "express": "^4.17.1",
         "express-validator": "^6.4.0",
-        "http-errors": "^1.7.3",
-        "http-status-codes": "^1.4.0",
+        "helmet": "^3.22.0",
         "jsonwebtoken": "^8.5.1",
         "mongoose": "^5.9.7",
         "morgan": "^1.10.0",
@@ -30,6 +30,8 @@
         "passport-jwt": "^4.0.0"
     },
     "devDependencies": {
+        "axios": "^0.19.2",
+        "faker": "^4.1.0",
         "jasmine": "^3.5.0",
         "nodemon": "^2.0.2",
         "nyc": "^15.0.1",
