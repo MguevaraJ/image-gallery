@@ -1,7 +1,7 @@
 {
     "name": "image-gallery-backend",
     "version": "0.0.1",
-    "description": "",
+    "description": "An application to share images and receive feedback from your contact.",
     "main": "src/index.js",
     "scripts": {
         "node:production": "cross-env NODE_ENV=\"production\"",
@@ -37,5 +37,9 @@
         "nodemon": "^2.0.2",
         "nyc": "^15.0.1",
         "supertest": "^4.0.2"
+    },
+    "repository": {
+        "type": "git",
+        "url": "https://github.com/MguevaraJ/image-gallery"
     }
 }
