@@ -10,10 +10,10 @@ const updateUserSchema = {
         },
         isLength: {
             options: {
-                min: 5,
+                min: 4,
                 max: 15
             },
-            errorMessage: length(5, 15)
+            errorMessage: length(4, 15)
         },
         trim: true,
         escape: true,
@@ -46,9 +46,9 @@ const updateUserSchema = {
         isLength: {
             options: {
                 min: 8,
-                max: 30
+                max: 60
             },
-            errorMessage: length(8, 30)
+            errorMessage: length(8, 60)
         },
         errorMessage: required
     }
@@ -63,10 +63,10 @@ const registerUserSchema = {
         trim: true,
         isLength: {
             options: {
-                min: 5,
+                min: 4,
                 max: 15
             },
-            errorMessage: length(5, 15)
+            errorMessage: length(4, 15)
         },
         escape: true,
         errorMessage: required
@@ -98,9 +98,9 @@ const registerUserSchema = {
         isLength: {
             options: {
                 min: 8,
-                max: 30
+                max: 60
             },
-            errorMessage: length(8, 30)
+            errorMessage: length(8, 60)
         },
         errorMessage: required
     }
@@ -134,9 +134,9 @@ const loginUserSchema = {
         isLength: {
             options: {
                 min: 8,
-                max: 30
+                max: 60
             },
-            errorMessage: length(8, 30)
+            errorMessage: length(8, 60)
         },
         errorMessage: required
     }

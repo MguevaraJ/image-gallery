@@ -1,14 +1,17 @@
 const Picture = require("mongoose").model("Picture");
-const { CREATED, INTERNAL_SERVER_ERROR } = require("../../../lib/responses.lib");
+const User = require("mongoose").model("User");
+const {
+    CREATED,
+    INTERNAL_SERVER_ERROR
+} = require("../../../lib/responses.lib");
 
 module.exports = async (req, res) => {
     try {
-        let { id, privatePictures, publicPictures } = req.user;
-
+        let { _id: userId, privatePictures, publicPictures } = req.user;
         const { title, description, url, private } = req.body;
 
         const newPicture = new Picture({
-            owner: id,
+            owner: userId,
             title,
             description,
             url,
@@ -17,17 +20,12 @@ module.exports = async (req, res) => {
 
         await newPicture.save();
 
-        if (newPicture.private) {
-            privatePictures = [newPicture._id, ...privatePictures];
-            await User.findByIdAndUpdate(id, {
-                privatePictures
-            });
-        } else {
-            publicPictures = [newPicture._id, ...publicPictures];
-            await User.findByIdAndUpdate(id, {
-                publicPictures
-            });
-        }
+        await User.findByIdAndUpdate(userId, {
+            $push: {
+                pictures: newPicture._id
+            }
+        });
+
         CREATED(res, "Your photo has been successfully uploaded");
     } catch (err) {
         INTERNAL_SERVER_ERROR(res, err.message);

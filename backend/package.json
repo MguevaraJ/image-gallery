@@ -8,6 +8,7 @@
         "node:development": "cross-env NODE_ENV=\"development\"",
         "server:run": "concurrently \"npm:node:production\" \"node ./src/index.js\"  ",
         "server:watch": "concurrently \"npm:node:development\" \"nodemon ./src/index.js\"",
+        "server:watch:logger": "concurrently \"npm:node:development\" \"nodemon ./src/index.js 1>> log 2>> log.err\"",
         "server:test": "concurrently \"npm:node:development\" \"jasmine\"",
         "server:test:coverage": "concurrently \"npm:node:development\" \"nyc jasmine\"",
         "faker:generate": "node ./src/lib/fake-data.lib.js"

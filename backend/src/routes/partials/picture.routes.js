@@ -18,7 +18,9 @@ const {
 } = require("../../schemas/picture.schema");
 
 const { idResourceSchema } = require("../../schemas/general.schema");
+
 const validate = require("../../middlewares/validate.middleware");
+const validatePictureOwner = require("../../middlewares/validate-picture-owner.middleware");
 
 router.get("/public", getAllController);
 
@@ -37,28 +39,31 @@ router.get(
     "/private/:id",
     checkSchema(idResourceSchema),
     validate,
+    validatePictureOwner,
     getOnePrivateController
 );
 
 router.post(
     "/create",
-    checkSchema(idResourceSchema),
+    checkSchema(createPictureSchema),
     validate,
     createController
 );
 
 router.delete(
-    "/delete/:id",
+    "/:id",
     checkSchema(idResourceSchema),
     validate,
+    validatePictureOwner,
     deleteController
 );
 
 router.put(
-    "/update/:id",
+    "/:id",
     checkSchema(idResourceSchema),
     checkSchema(updatePictureSchema),
     validate,
+    validatePictureOwner,
     updateController
 );
 

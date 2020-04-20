@@ -10,7 +10,6 @@ const {
 } = require("../../schemas/user.schema");
 
 const {
-    meController,
     getOneController,
     getAllController,
     registerController,
@@ -20,16 +19,9 @@ const {
 } = require("../../controllers/user/main.controller");
 
 const validate = require("../../middlewares/validate.middleware");
-
-router.get(
-    "/me",
-    passport.authenticate("jwt", { session: false }),
-    meController
-);
+const validateUserOwner = require("../../middlewares/validate-user-owner.middleware");
 
 router.get("/", getAllController);
-
-router.get("/:id", checkSchema(idResourceSchema), getOneController);
 
 router.post(
     "/register",
@@ -42,13 +34,16 @@ router.post("/login", checkSchema(loginUserSchema), validate, loginController);
 
 router.use(passport.authenticate("jwt", { session: false }));
 
-router.delete("/delete", deleteController);
-
-router.put(
-    "/update",
-    checkSchema(updateUserSchema),
+router.get(
+    "/:id",
+    checkSchema(idResourceSchema),
     validate,
-    updateController
+    validateUserOwner,
+    getOneController
 );
+
+router.delete("/", deleteController);
+
+router.put("/", checkSchema(updateUserSchema), validate, updateController);
 
 module.exports = router;

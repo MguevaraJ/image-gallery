@@ -54,6 +54,17 @@ function UNAUTHORIZED(res, message) {
     res.status(metadata.code).json(metadata);
 };
 
+function FORBIDDEN(res, message) {
+    const metadata = {
+        code: 403,
+        statusMessage: "Forbidden",
+        success: false,
+        message: message || "The request was legal, but the user does not have the privileges to make it"
+    };
+
+    res.status(metadata.code).json(metadata);
+};
+
 function NOT_FOUND(res, message) {
     const metadata = {
         code: 404,
