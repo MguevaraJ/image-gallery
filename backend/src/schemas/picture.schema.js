@@ -27,6 +27,7 @@ const createPictureSchema = {
             }
         },
         trim: true,
+        escape: true,
         isLength: {
             options: {
                 min: 25,
@@ -42,7 +43,6 @@ const createPictureSchema = {
             negated: true
         },
         trim: true,
-        escape: true,
         errorMessage: required
     },
     private: {
@@ -83,6 +83,7 @@ const updatePictureSchema = {
             }
         },
         trim: true,
+        escape: true,
         isLength: {
             options: {
                 min: 25,
@@ -98,7 +99,6 @@ const updatePictureSchema = {
             negated: true
         },
         trim: true,
-        escape: true,
         errorMessage: required
     },
     private: {

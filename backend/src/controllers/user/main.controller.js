@@ -1,5 +1,4 @@
 module.exports = {
-    meController: require("./partials/me.controller"),
     getOneController: require("./partials/get-one.controller"),
     getAllController: require("./partials/get-all.controller"),
     loginController: require("./partials/login.controller"),

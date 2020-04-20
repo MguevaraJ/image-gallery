@@ -9,21 +9,19 @@ const {
 module.exports = async (req, res) => {
     try {
         const { id } = req.params;
-
+        const { isOwner } = req;
         const user = await User.findById(id, {
-            password: false,
-            privatePictures: false
+            password: false
+        })
+        .populate({ 
+            path: "pictures", 
+            select: picturesPopulateFields, 
+            match: isOwner ? undefined : { private: false }
         });
 
         if (!user) NOT_FOUND(res, "The requesting user does not exist");
-        else {
-            const userPopulate = await User.populate(user, {
-                path: "publicPictures",
-                select: picturesPopulateFields
-            });
-            OK(res, null, userPopulate); 
-        }
+        else OK(res, null, user); 
     } catch (err) {
         INTERNAL_SERVER_ERROR(res, err.message);
     }
-};
+}
